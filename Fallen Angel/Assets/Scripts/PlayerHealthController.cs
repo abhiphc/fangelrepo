@@ -12,8 +12,6 @@ public class PlayerHealthController : MonoBehaviour
     private float health;
     public static bool isDead;
     [SerializeField] Animator playerAnimator;
-
-
     private void Start()
     {
         health = maxHealth;
@@ -24,35 +22,36 @@ public class PlayerHealthController : MonoBehaviour
 
     void Update()
     {
-        //TakeDamage(damageAmount);
-        //HealthRegain();
+        TakeDamage(damageAmount);
+        HealthRegain();
     }
     public void TakeDamage(float damage)
     {
-        health -= damage;
-        healthbar.value -= damage;
-        if (health <= 0f)
+        //health -= damage;
+        //healthbar.value -= damage;
+        //if (health <= 0f)
+        //{
+        //    Die();
+        //}
+        //HealthRegain();
+
+        if (Input.GetKeyDown(KeyCode.T))
         {
-            Die();
+            health -= damage;
+            healthbar.value -= damage;
+            if (health <= 0f)
+            {
+                Die();
+            }
+           
         }
         HealthRegain();
-
-        //    if (Input.GetKeyDown(KeyCode.T))
-        //    {
-        //        health -= damage;
-        //        healthbar.value -= damage;
-        //        if (health <= 0f)
-        //        {
-        //            Die();
-        //        }
-        //        HealthRegain();
-        //    }
-        //}
     }
     void Die()
     {
         Debug.Log("Player dead.");
         isDead = true;
+        playerAnimator.SetLayerWeight(0, 1); // Enable basic layer containing die animation
         playerAnimator.SetTrigger("isDieing");
         this.GetComponent<ThirdPersonController>().enabled = false;
         this.GetComponent<CharacterController>().enabled = false;

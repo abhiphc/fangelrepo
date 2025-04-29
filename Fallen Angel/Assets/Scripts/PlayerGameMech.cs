@@ -53,7 +53,7 @@ public class PlayerGameMech : MonoBehaviour
 
     void AimAndShoot()
     {
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(1) && !PlayerHealthController.isDead)
         {
             isAiming = true;
             isInCombat = false; // Disable combat mode when aiming
@@ -98,7 +98,7 @@ public class PlayerGameMech : MonoBehaviour
 
     void Combat() // For Combat Mode Action
     {
-        if(Input.GetMouseButtonDown(0) && isInCombat && !isAiming)
+        if(Input.GetMouseButtonDown(0) && isInCombat && !isAiming && !PlayerHealthController.isDead)
         {
             int combatAction = Random.Range(0, 2); // Randomly choose between 0 and 1
             if(combatAction == 0)
