@@ -11,6 +11,7 @@ public class PlayerGameMech : MonoBehaviour
     public bool isInCombat;
     [SerializeField] GameObject crossbar;
     [SerializeField] List<CinemachineVirtualCamera> VCameras = new List<CinemachineVirtualCamera>();
+    [SerializeField] List<GameObject> hitboxes = new List<GameObject>();
     [SerializeField] float normalSensitivity;
     [SerializeField] float aimSensitivity;
     private Animator animator;
@@ -32,6 +33,10 @@ public class PlayerGameMech : MonoBehaviour
         aimObj.SetActive(false);
         dummyAK.SetActive(true);
         rig1.weight = 0f; // Disable the rig at the start
+        foreach (GameObject hitbox in hitboxes)
+        {
+            hitbox.SetActive(false);
+        }
     }
     void Start()
     {
@@ -95,8 +100,15 @@ public class PlayerGameMech : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0) && isInCombat && !isAiming)
         {
-            isInCombat = false;
-            StartCoroutine(CombatPunch());
+            int combatAction = Random.Range(0, 2); // Randomly choose between 0 and 1
+            if(combatAction == 0)
+            {
+                StartCoroutine(CombatPunch());
+            }
+            else
+            {
+                StartCoroutine(CombatKick());
+            }
             
         }
        
@@ -104,12 +116,35 @@ public class PlayerGameMech : MonoBehaviour
 
     IEnumerator CombatPunch()
     {
-        
+        isInCombat = false;
+        animator.SetLayerWeight(2, 0); // Disable combat Kick layer
+        animator.SetBool("isKicking", false);
         animator.SetLayerWeight(1, 1); // Enable combat Punch layer
         animator.SetBool("isPunching", true);
+        hitboxes[0].SetActive(true); // Enable punch hitbox
+        hitboxes[1].SetActive(true);
         yield return new WaitForSeconds(1.15f);
         animator.SetLayerWeight(1, 0); // Disable combat Punch layer
         animator.SetBool("isPunching", false);
+        hitboxes[0].SetActive(false); // Disble punch hitbox
+        hitboxes[1].SetActive(false);
+        yield return new WaitForSeconds(3f);
+        isInCombat = true;
+    }
+    IEnumerator CombatKick()
+    {
+        isInCombat = false;
+        animator.SetLayerWeight(1, 0); // Disable combat Punch layer
+        animator.SetBool("isPunching", false);
+        animator.SetLayerWeight(2, 1); // Enable combat Kick layer
+        animator.SetBool("isKicking", true);
+        hitboxes[2].SetActive(true); //Enable kick hitbox
+        yield return new WaitForSeconds(1.15f);
+        animator.SetLayerWeight(2, 0); // Disable combat Kick layer
+        animator.SetBool("isKicking", false);
+        hitboxes[2].SetActive(false);
+        yield return new WaitForSeconds(3f);
+        
         isInCombat = true;
     }
 
