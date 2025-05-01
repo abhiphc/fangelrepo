@@ -5,15 +5,15 @@ using System.Collections.Generic;
 public class WeaponSelector : MonoBehaviour
 {
     [SerializeField] bool isSelected = false;
-    public int selectedWeaponIndex;
-    [SerializeField] List<Transform> weapons = new List<Transform>();
-    void Start()
+    public static int selectedWeaponIndex =0; //this variable is used to select the weapon in the PlayerGameMech script
+    [SerializeField] int weaponIndex; //for seeing in inspector
+    private void Start()
     {
-        selectedWeaponIndex = 0;
+        weaponIndex = selectedWeaponIndex;
     }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.G)) // Gun mode can activate or deactivate through this key
+        if (Input.GetKeyDown(KeyCode.G)) // Gun mode can be activated or deactivated through this key
         {
             if(!Input.GetMouseButton(1)) // While pressing RMB the gun mode cannot be activated
             {
@@ -21,7 +21,11 @@ public class WeaponSelector : MonoBehaviour
             }
             
         }
-       
+        if (isSelected) 
+        {
+            SelectGun();
+        }
+
     }
     void ToggleGunMode()
     {
@@ -30,7 +34,7 @@ public class WeaponSelector : MonoBehaviour
                 if (isSelected)
                 {
                     PlayerGameMech.hasGun = true;
-                    SelectGun();    
+                       
         }
                 else
                 {
@@ -40,33 +44,14 @@ public class WeaponSelector : MonoBehaviour
 
     void SelectGun()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
-            selectedWeaponIndex = 0;
-            weapons[0].gameObject.SetActive(true);
-            weapons[1].gameObject.SetActive(false);
-            weapons[2].gameObject.SetActive(false);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            selectedWeaponIndex = 1;
-            weapons[0].gameObject.SetActive(false);
-            weapons[1].gameObject.SetActive(true);
-            weapons[2].gameObject.SetActive(false);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            selectedWeaponIndex = 2;
-            weapons[0].gameObject.SetActive(false);
-            weapons[1].gameObject.SetActive(false);
-            weapons[2].gameObject.SetActive(true);
-        }
-        else
-        {
-            selectedWeaponIndex = 0;
-            weapons[0].gameObject.SetActive(true);
-            weapons[1].gameObject.SetActive(false);
-            weapons[2].gameObject.SetActive(false);
+            selectedWeaponIndex++;
+            if (selectedWeaponIndex >= 3)
+            {
+                selectedWeaponIndex = 0;
+            }
+            weaponIndex = selectedWeaponIndex;
         }
     }
 }

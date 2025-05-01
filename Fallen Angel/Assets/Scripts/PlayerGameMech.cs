@@ -27,6 +27,7 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] float bulletForce = 1000f;
     [SerializeField] GameObject bulletImpact;
     RaycastHit hit;
+    [SerializeField] List<Transform> weapons = new List<Transform>();
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -74,7 +75,7 @@ public class PlayerGameMech : MonoBehaviour
             PlayerAimDirection();
             //aiming mode on for AK
             animator.SetLayerWeight(3, 1); //Enable aiming layer
-
+            WeaponSelect(); // Select weapon
             //for shooting AK
             if (Input.GetMouseButton(0) && !isShooting)
             {
@@ -192,6 +193,33 @@ public class PlayerGameMech : MonoBehaviour
         bulletRenderer.enabled = false;
         yield return new WaitForSeconds(0.01f);
         isShooting = false;
+
+    }
+
+    //Select weapon
+    void WeaponSelect()
+    {
+        if(WeaponSelector.selectedWeaponIndex == 0)
+        {
+            weapons[0].gameObject.SetActive(true);
+            weapons[1].gameObject.SetActive(false);
+            weapons[2].gameObject.SetActive(false);
+
+        }
+
+        if (WeaponSelector.selectedWeaponIndex == 1)
+        {
+            weapons[0].gameObject.SetActive(false);
+            weapons[1].gameObject.SetActive(true);
+            weapons[2].gameObject.SetActive(false);
+        }
+
+        if (WeaponSelector.selectedWeaponIndex == 2)
+        {
+            weapons[0].gameObject.SetActive(false);
+            weapons[1].gameObject.SetActive(false);
+            weapons[2].gameObject.SetActive(true);
+        }
 
     }
     
