@@ -9,6 +9,7 @@ public class PlayerGameMech : MonoBehaviour
 {
     public bool isAiming;
     public bool isInCombat;
+    public static bool hasGun;
     [SerializeField] GameObject crossbar;
     [SerializeField] List<CinemachineVirtualCamera> VCameras = new List<CinemachineVirtualCamera>();
     [SerializeField] List<GameObject> hitboxes = new List<GameObject>();
@@ -19,7 +20,7 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] bool isShooting = false;
     [SerializeField] GameObject aimObj;
-    [SerializeField] GameObject dummyAK;
+    //[SerializeField] GameObject dummyAK;
     [SerializeField] LineRenderer bulletRenderer;
     [SerializeField] GameObject bulletRndObj;
     [SerializeField] Rig rig1;
@@ -31,7 +32,8 @@ public class PlayerGameMech : MonoBehaviour
         animator = this.GetComponent<Animator>();
         akHandler.SetActive(false);
         aimObj.SetActive(false);
-        dummyAK.SetActive(true);
+        //dummyAK.SetActive(true);
+        crossbar.SetActive(false);
         rig1.weight = 0f; // Disable the rig at the start
         foreach (GameObject hitbox in hitboxes)
         {
@@ -40,15 +42,18 @@ public class PlayerGameMech : MonoBehaviour
     }
     void Start()
     {
+        hasGun = false;
         isAiming = false;
         isInCombat = true; 
     }
 
     void Update()
     {
-        AimAndShoot();
+        if (hasGun)
+        {
+            AimAndShoot();
+        }
         Combat();
-        
     }
 
     void AimAndShoot()
@@ -56,11 +61,11 @@ public class PlayerGameMech : MonoBehaviour
         if (Input.GetMouseButton(1) && !PlayerHealthController.isDead)
         {
             isAiming = true;
-            isInCombat = false; // Disable combat mode when aiming
+            //isInCombat = false; // Disable combat mode when aiming
             rig1.weight = 1f; // Enable the rig when aiming
             aimObj.SetActive(true);
             akHandler.SetActive(true);
-            dummyAK.SetActive(false); //dummy AK is not activated when aiming
+            //dummyAK.SetActive(false); //dummy AK is not activated when aiming
             VCameras[0].gameObject.SetActive(false);
             VCameras[1].gameObject.SetActive(true);
             crossbar.SetActive(true);
@@ -81,11 +86,11 @@ public class PlayerGameMech : MonoBehaviour
         else
         {
             isAiming = false;
-            isInCombat = true; // Enable combat mode when not aiming
+            //isInCombat = true; // Enable combat mode when not aiming
             rig1.weight = 0f; // Disable the rig when not aiming
             akHandler.SetActive(false);
             aimObj.SetActive(false);
-            dummyAK.SetActive(true); //dummy AK is activated when not aiming
+            //dummyAK.SetActive(true); //dummy AK is activated when not aiming
             VCameras[0].gameObject.SetActive(true);
             VCameras[1].gameObject.SetActive(false);
             crossbar.SetActive(false);
@@ -128,7 +133,7 @@ public class PlayerGameMech : MonoBehaviour
         animator.SetBool("isPunching", false);
         hitboxes[0].SetActive(false); // Disble punch hitbox
         hitboxes[1].SetActive(false);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(0.25f);
         isInCombat = true;
     }
     IEnumerator CombatKick()
@@ -143,7 +148,7 @@ public class PlayerGameMech : MonoBehaviour
         animator.SetLayerWeight(2, 0); // Disable combat Kick layer
         animator.SetBool("isKicking", false);
         hitboxes[2].SetActive(false);
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(0.25f);
         
         isInCombat = true;
     }
