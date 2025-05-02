@@ -7,6 +7,7 @@ public class WeaponSelector : MonoBehaviour
     [SerializeField] bool isSelected = false;
     public static int selectedWeaponIndex =0; //this variable is used to select the weapon in the PlayerGameMech script
     [SerializeField] int weaponIndex; //for seeing in inspector
+    [SerializeField] int weaponCount = 4;
     private void Start()
     {
         weaponIndex = selectedWeaponIndex;
@@ -47,7 +48,7 @@ public class WeaponSelector : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             selectedWeaponIndex++;
-            if (selectedWeaponIndex >= 3)
+            if (selectedWeaponIndex > weaponCount - 1)
             {
                 selectedWeaponIndex = 0;
             }

@@ -204,6 +204,7 @@ public class PlayerGameMech : MonoBehaviour
             weapons[0].gameObject.SetActive(true);
             weapons[1].gameObject.SetActive(false);
             weapons[2].gameObject.SetActive(false);
+            weapons[3].gameObject.SetActive(false);
 
         }
 
@@ -212,6 +213,7 @@ public class PlayerGameMech : MonoBehaviour
             weapons[0].gameObject.SetActive(false);
             weapons[1].gameObject.SetActive(true);
             weapons[2].gameObject.SetActive(false);
+            weapons[3].gameObject.SetActive(false);
         }
 
         if (WeaponSelector.selectedWeaponIndex == 2)
@@ -219,8 +221,15 @@ public class PlayerGameMech : MonoBehaviour
             weapons[0].gameObject.SetActive(false);
             weapons[1].gameObject.SetActive(false);
             weapons[2].gameObject.SetActive(true);
+            weapons[3].gameObject.SetActive(false);
         }
-
+        if(WeaponSelector.selectedWeaponIndex == 3)
+        {
+            weapons[0].gameObject.SetActive(false);
+            weapons[1].gameObject.SetActive(false);
+            weapons[2].gameObject.SetActive(false);
+            weapons[3].gameObject.SetActive(true);
+        }   
     }
     
 }
