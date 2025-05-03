@@ -81,8 +81,6 @@ public class PlayerGameMech : MonoBehaviour
             {
                 StartCoroutine(ShootAK(hit));
             }
-
-
         }
         else
         {
@@ -115,11 +113,8 @@ public class PlayerGameMech : MonoBehaviour
             {
                 StartCoroutine(CombatKick());
             }
-            
         }
-       
     }
-
     IEnumerator CombatPunch()
     {
         isInCombat = false;
@@ -150,7 +145,7 @@ public class PlayerGameMech : MonoBehaviour
         animator.SetBool("isKicking", false);
         hitboxes[2].SetActive(false);
         yield return new WaitForSeconds(0.25f);
-        
+
         isInCombat = true;
     }
 
@@ -205,7 +200,6 @@ public class PlayerGameMech : MonoBehaviour
             weapons[1].gameObject.SetActive(false);
             weapons[2].gameObject.SetActive(false);
             weapons[3].gameObject.SetActive(false);
-
         }
 
         if (WeaponSelector.selectedWeaponIndex == 1)
