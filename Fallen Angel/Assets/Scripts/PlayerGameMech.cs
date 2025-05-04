@@ -75,7 +75,9 @@ public class PlayerGameMech : MonoBehaviour
             PlayerAimDirection();
             //aiming mode on for AK
             animator.SetLayerWeight(3, 1); //Enable aiming layer
-            WeaponSelect(); // Select weapon
+
+            WeaponSelect(); // Select weapon through WeaponSelector script
+
             //for shooting AK
             if (Input.GetMouseButton(0) && !isShooting)
             {
@@ -104,7 +106,7 @@ public class PlayerGameMech : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0) && isInCombat && !isAiming && !PlayerHealthController.isDead)
         {
-            int combatAction = Random.Range(0, 2); // Randomly choose between 0 and 1
+            int combatAction = Random.Range(0, 2); // Randomly choose between 0 and 2 for combat types
             if(combatAction == 0)
             {
                 StartCoroutine(CombatPunch());
