@@ -78,10 +78,30 @@ public class PlayerGameMech : MonoBehaviour
 
             WeaponSelect(); // Select weapon through WeaponSelector script
 
-            //for shooting AK
+            
             if (Input.GetMouseButton(0) && !isShooting)
             {
-                StartCoroutine(ShootAK(hit));
+                if(WeaponSelector.selectedWeaponIndex == 0)
+                {
+                    Debug.Log("AK is firing");
+                    StartCoroutine(ShootAK(hit)); //for shooting AK
+                }
+                if (WeaponSelector.selectedWeaponIndex == 1)
+                {
+                    Debug.Log("Shotgun is firing");
+                    StartCoroutine(ShootAK(hit)); //for shooting Shotgun
+                }
+                if (WeaponSelector.selectedWeaponIndex == 2)
+                {
+                    Debug.Log("Sniper is firing");
+                    StartCoroutine(ShootAK(hit)); //for shooting Sniper
+                }
+                if (WeaponSelector.selectedWeaponIndex == 3)
+                {
+                    Debug.Log("RPG is firing");
+                    StartCoroutine(ShootAK(hit)); //for shooting RPG
+                }
+
             }
         }
         else
