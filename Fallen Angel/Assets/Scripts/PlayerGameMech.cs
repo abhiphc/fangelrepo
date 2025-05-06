@@ -20,7 +20,7 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] GameObject muzzleFlash;
     [SerializeField] bool isShooting = false;
     [SerializeField] GameObject aimObj;
-    //[SerializeField] GameObject dummyAK;
+    [SerializeField] List<Transform> holsterWpn = new List<Transform>();
     [SerializeField] LineRenderer bulletRenderer;
     [SerializeField] GameObject bulletRndObj;
     [SerializeField] Rig rig1;
@@ -33,7 +33,6 @@ public class PlayerGameMech : MonoBehaviour
         animator = this.GetComponent<Animator>();
         akHandler.SetActive(false);
         aimObj.SetActive(false);
-        //dummyAK.SetActive(true);
         crossbar.SetActive(false);
         rig1.weight = 0f; // Disable the rig at the start
         foreach (GameObject hitbox in hitboxes)
@@ -66,7 +65,7 @@ public class PlayerGameMech : MonoBehaviour
             rig1.weight = 1f; // Enable the rig when aiming
             aimObj.SetActive(true);
             akHandler.SetActive(true);
-            //dummyAK.SetActive(false); //dummy AK is not activated when aiming
+            holsterWpn[WeaponSelector.selectedWeaponIndex].gameObject.SetActive(false); //dummy AK is not activated when aiming
             VCameras[0].gameObject.SetActive(false);
             VCameras[1].gameObject.SetActive(true);
             crossbar.SetActive(true);
@@ -111,7 +110,7 @@ public class PlayerGameMech : MonoBehaviour
             rig1.weight = 0f; // Disable the rig when not aiming
             akHandler.SetActive(false);
             aimObj.SetActive(false);
-            //dummyAK.SetActive(true); //dummy AK is activated when not aiming
+            holsterWpn[WeaponSelector.selectedWeaponIndex].gameObject.SetActive(true);
             VCameras[0].gameObject.SetActive(true);
             VCameras[1].gameObject.SetActive(false);
             crossbar.SetActive(false);

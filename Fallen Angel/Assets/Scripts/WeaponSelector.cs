@@ -10,6 +10,7 @@ public class WeaponSelector : MonoBehaviour
     [SerializeField] int weaponIndex; //for seeing in inspector
     [SerializeField] int weaponCount = 4;
     [SerializeField] List<Image> weaponImages = new List<Image>();
+    [SerializeField] List<Transform> holsterWeapons = new List<Transform>();
     private void Start()
     {
         weaponIndex = selectedWeaponIndex;
@@ -23,6 +24,7 @@ public class WeaponSelector : MonoBehaviour
             {
                 ToggleGunMode();
                 ShowGunsImage();
+                ShowHolsterWeapon(selectedWeaponIndex);
             }
             
         }
@@ -31,6 +33,21 @@ public class WeaponSelector : MonoBehaviour
             SelectGun();
         }
 
+    }
+
+    void ShowHolsterWeapon(int sIndex)
+    {
+        for (int i = 0; i <= weaponCount - 1; i++)
+        {
+            if (i == sIndex)
+            {
+                holsterWeapons[i].gameObject.SetActive(true);
+            }
+            else
+            {
+                holsterWeapons[i].gameObject.SetActive(false);
+            }
+        }
     }
     void ToggleGunMode()
     {
@@ -54,6 +71,7 @@ public class WeaponSelector : MonoBehaviour
         {
             DisplayGuns();
             ShowGunsImage();
+            ShowHolsterWeapon(selectedWeaponIndex);
         }
     }
 
@@ -127,5 +145,6 @@ public class WeaponSelector : MonoBehaviour
                 break;
 
         }
+        
     }
 }
