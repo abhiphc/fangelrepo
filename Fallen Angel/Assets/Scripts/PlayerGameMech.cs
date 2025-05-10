@@ -28,6 +28,18 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] GameObject bulletImpact;
     RaycastHit hit;
     [SerializeField] List<Transform> weapons = new List<Transform>();
+
+    [Header("Shotgun Properties")]
+    [SerializeField] GameObject muzzleFlashSG;
+    [SerializeField] LineRenderer bulletRendererSG;
+    [SerializeField] GameObject bulletRndObjSG;
+
+    [Header("RPG Properties")]
+    [SerializeField] GameObject muzzleFlashRPG;
+    [SerializeField] GameObject cannonSpawnObj;
+    [SerializeField] float cannonFireDelay = 2f;
+    [SerializeField] GameObject cannonPrefab;
+    [SerializeField] float cannonForce = 200f;
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -72,7 +84,7 @@ public class PlayerGameMech : MonoBehaviour
             this.GetComponent<ThirdPersonController>().canRotate = false;
             this.GetComponent<ThirdPersonController>().sensitivity = aimSensitivity;
             PlayerAimDirection();
-            //aiming mode on for AK
+            //aiming mode on for Weapons
             animator.SetLayerWeight(3, 1); //Enable aiming layer
 
             WeaponSelect(); // Select weapon through WeaponSelector script
@@ -88,19 +100,23 @@ public class PlayerGameMech : MonoBehaviour
                 if (WeaponSelector.selectedWeaponIndex == 1)
                 {
                     Debug.Log("Shotgun is firing");
-                    StartCoroutine(ShootAK(hit)); //for shooting Shotgun
+                    StartCoroutine(ShootSG(hit)); //for shooting Shotgun
                 }
                 if (WeaponSelector.selectedWeaponIndex == 2)
                 {
                     Debug.Log("Sniper is firing");
                     StartCoroutine(ShootAK(hit)); //for shooting Sniper
                 }
+               
+            }
+
+            if (Input.GetMouseButtonDown(0) && !isShooting)
+            {
                 if (WeaponSelector.selectedWeaponIndex == 3)
                 {
                     Debug.Log("RPG is firing");
-                    StartCoroutine(ShootAK(hit)); //for shooting RPG
+                    StartCoroutine(ShootRPG()); //for shooting RPG
                 }
-
             }
         }
         else
@@ -211,6 +227,50 @@ public class PlayerGameMech : MonoBehaviour
         isShooting = false;
 
     }
+    // Shooting Shotgun Coroutine
+    IEnumerator ShootSG(RaycastHit hit)
+    {
+        isShooting = true;
+        muzzleFlashSG.SetActive(true);
+        bulletRendererSG.enabled = true;
+        bulletRendererSG.SetPosition(0, bulletRndObjSG.transform.position);
+        bulletRendererSG.SetPosition(1, hit.point);
+        //**** bullet effects Shotgun
+        GameObject bulletImpactObjSG = Instantiate(bulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
+        Destroy(bulletImpactObjSG, 1.5f);
+        if (hit.rigidbody != null && hit.collider.tag != "Player")
+        {
+            hit.rigidbody.AddForce(-hit.normal * bulletForce);
+        }
+        //****
+        yield return new WaitForSeconds(0.15f);
+        muzzleFlashSG.SetActive(false);
+        bulletRendererSG.enabled = false;
+        yield return new WaitForSeconds(0.15f);
+        isShooting = false;
+
+    }
+
+    //Shooting Sniper Coroutine
+
+    // Shooting RPG Coroutine
+    IEnumerator ShootRPG()
+    {
+        isShooting = true;
+        //**** Spawn and Fire Cannon from RPG
+        GameObject cannon = Instantiate(cannonPrefab, cannonSpawnObj.transform.position,Quaternion.identity);
+        cannon.GetComponent<Rigidbody>().AddForce(cannonSpawnObj.transform.forward * cannonForce, ForceMode.Impulse);
+        muzzleFlashRPG.SetActive(true);
+        Destroy(cannon, 5f);
+        yield return new WaitForSeconds(0.5f);
+        muzzleFlashRPG.SetActive(false);
+        //bulletRendererSG.enabled = false;
+        yield return new WaitForSeconds(cannonFireDelay);
+        isShooting = false;
+
+    }
+
+
 
     //Select weapon
     void WeaponSelect()
