@@ -36,10 +36,11 @@ public class PlayerGameMech : MonoBehaviour
 
     [Header("RPG Properties")]
     [SerializeField] GameObject muzzleFlashRPG;
-    [SerializeField] GameObject cannonSpawnObj;
+    [SerializeField] GameObject blastEffect;
     [SerializeField] float cannonFireDelay = 2f;
-    [SerializeField] GameObject cannonPrefab;
-    [SerializeField] float cannonForce = 200f;
+    [SerializeField] float blastForceUp = 1000f;
+    [SerializeField] LineRenderer bulletRendererRPG;
+    [SerializeField] GameObject bulletRndObjRPG;
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -115,7 +116,7 @@ public class PlayerGameMech : MonoBehaviour
                 if (WeaponSelector.selectedWeaponIndex == 3)
                 {
                     Debug.Log("RPG is firing");
-                    StartCoroutine(ShootRPG()); //for shooting RPG
+                    StartCoroutine(ShootRPG(hit)); //for shooting RPG
                 }
             }
         }
@@ -254,17 +255,37 @@ public class PlayerGameMech : MonoBehaviour
     //Shooting Sniper Coroutine
 
     // Shooting RPG Coroutine
-    IEnumerator ShootRPG()
+    IEnumerator ShootRPG(RaycastHit hit)
     {
-        isShooting = true;
+        //isShooting = true;
         //**** Spawn and Fire Cannon from RPG
-        GameObject cannon = Instantiate(cannonPrefab, cannonSpawnObj.transform.position,Quaternion.identity);
-        cannon.GetComponent<Rigidbody>().AddForce(cannonSpawnObj.transform.forward * cannonForce, ForceMode.Impulse);
+        //GameObject cannon = Instantiate(cannonPrefab, cannonSpawnObj.transform.position,Quaternion.identity);
+        //cannon.GetComponent<Rigidbody>().AddForce(cannonSpawnObj.transform.forward * cannonForce, ForceMode.VelocityChange);
+        //muzzleFlashRPG.SetActive(true);
+        ////Destroy(cannon, 5f);
+        //yield return new WaitForSeconds(0.5f);
+        //muzzleFlashRPG.SetActive(false);
+        ////bulletRendererSG.enabled = false;
+        //yield return new WaitForSeconds(cannonFireDelay);
+        //isShooting = false;
+
+        isShooting = true;
         muzzleFlashRPG.SetActive(true);
-        Destroy(cannon, 5f);
+        bulletRendererRPG.enabled = true;
+        bulletRendererRPG.SetPosition(0, bulletRndObjRPG.transform.position);
+        bulletRendererRPG.SetPosition(1, hit.point);
+        //**** Blast effect
+        GameObject bEffect = Instantiate(blastEffect, hit.point, Quaternion.LookRotation(hit.normal));
+        Destroy(bEffect, 1.5f);
+        if (hit.rigidbody != null && hit.collider.tag != "Player")
+        {
+            hit.rigidbody.AddForce(Vector3.up * blastForceUp);
+        }
+        //****
+        yield return new WaitForSeconds(0.25f);
+        bulletRendererRPG.enabled = false;
         yield return new WaitForSeconds(0.5f);
         muzzleFlashRPG.SetActive(false);
-        //bulletRendererSG.enabled = false;
         yield return new WaitForSeconds(cannonFireDelay);
         isShooting = false;
 
