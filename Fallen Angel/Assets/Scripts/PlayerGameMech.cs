@@ -39,6 +39,7 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] GameObject blastEffect;
     [SerializeField] float cannonFireDelay = 2f;
     [SerializeField] float blastForceUp = 1000f;
+    [SerializeField] float blastRadius = 5f;
     [SerializeField] LineRenderer bulletRendererRPG;
     [SerializeField] GameObject bulletRndObjRPG;
     private void Awake()
@@ -277,10 +278,20 @@ public class PlayerGameMech : MonoBehaviour
         //**** Blast effect
         GameObject bEffect = Instantiate(blastEffect, hit.point, Quaternion.LookRotation(hit.normal));
         Destroy(bEffect, 1.5f);
-        if (hit.rigidbody != null && hit.collider.tag != "Player")
-        {
-            hit.rigidbody.AddForce(Vector3.up * blastForceUp);
-        }
+        //if (hit.rigidbody != null && hit.collider.tag != "Player")
+        //{
+        //    hit.rigidbody.AddForce(Vector3.up * blastForceUp);
+        //}
+            Collider[] colliders = Physics.OverlapSphere(hit.point, 5f);
+                foreach (Collider collider in colliders)
+                {
+                        Rigidbody rb = collider.GetComponent<Rigidbody>();
+                        if (rb != null)
+                        {
+                            rb.AddExplosionForce(blastForceUp, hit.point, blastRadius);
+                        }
+            
+                }
         //****
         yield return new WaitForSeconds(0.25f);
         bulletRendererRPG.enabled = false;

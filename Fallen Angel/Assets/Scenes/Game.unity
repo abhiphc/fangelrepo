@@ -1338,6 +1338,43 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8855824610474941383, guid: 344e5bc5b26a34542848678562e23c45, type: 3}
   m_PrefabInstance: {fileID: 45444440}
   m_PrefabAsset: {fileID: 0}
+--- !u!84 &493704245
+RenderTexture:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 
+  m_ImageContentsHash:
+    serializedVersion: 2
+    Hash: 00000000000000000000000000000000
+  m_IsAlphaChannelOptional: 0
+  serializedVersion: 6
+  m_Width: 257
+  m_Height: 257
+  m_AntiAliasing: 1
+  m_MipCount: -1
+  m_DepthStencilFormat: 94
+  m_ColorFormat: 4
+  m_MipMap: 0
+  m_GenerateMips: 1
+  m_SRGB: 1
+  m_UseDynamicScale: 0
+  m_UseDynamicScaleExplicit: 0
+  m_BindMS: 0
+  m_EnableCompatibleFormat: 1
+  m_EnableRandomWrite: 0
+  m_TextureSettings:
+    serializedVersion: 2
+    m_FilterMode: 1
+    m_Aniso: 1
+    m_MipBias: 0
+    m_WrapU: 1
+    m_WrapV: 1
+    m_WrapW: 1
+  m_Dimension: 2
+  m_VolumeDepth: 1
+  m_ShadowSamplingMode: 2
 --- !u!4 &494342163 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7546041815067561320, guid: 344e5bc5b26a34542848678562e23c45, type: 3}
@@ -2268,7 +2305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shapeColliderGO: {fileID: 224208161492962586}
-  renderTex: {fileID: 2133030884}
+  renderTex: {fileID: 493704245}
   mapMaterial: {fileID: 2100000, guid: 65bbe9e0008384c5997f0cf300c3cb81, type: 2}
   iconPref: {fileID: 100164, guid: d392edba23dec4ef38924695a920a568, type: 3}
   mapCamera: {fileID: 903899132}
@@ -2415,7 +2452,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 2133030884}
+  m_TargetTexture: {fileID: 493704245}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 0
@@ -20427,43 +20464,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 8443646102428367525, guid: 344e5bc5b26a34542848678562e23c45, type: 3}
   m_PrefabInstance: {fileID: 45444440}
   m_PrefabAsset: {fileID: 0}
---- !u!84 &2133030884
-RenderTexture:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 
-  m_ImageContentsHash:
-    serializedVersion: 2
-    Hash: 00000000000000000000000000000000
-  m_IsAlphaChannelOptional: 0
-  serializedVersion: 6
-  m_Width: 257
-  m_Height: 257
-  m_AntiAliasing: 1
-  m_MipCount: -1
-  m_DepthStencilFormat: 94
-  m_ColorFormat: 4
-  m_MipMap: 0
-  m_GenerateMips: 1
-  m_SRGB: 1
-  m_UseDynamicScale: 0
-  m_UseDynamicScaleExplicit: 0
-  m_BindMS: 0
-  m_EnableCompatibleFormat: 1
-  m_EnableRandomWrite: 0
-  m_TextureSettings:
-    serializedVersion: 2
-    m_FilterMode: 1
-    m_Aniso: 1
-    m_MipBias: 0
-    m_WrapU: 1
-    m_WrapV: 1
-    m_WrapW: 1
-  m_Dimension: 2
-  m_VolumeDepth: 1
-  m_ShadowSamplingMode: 2
 --- !u!1 &1999751719780066
 GameObject:
   m_ObjectHideFlags: 0
@@ -22345,7 +22345,8 @@ MonoBehaviour:
   muzzleFlashRPG: {fileID: 1108058566}
   blastEffect: {fileID: 1121192042590650, guid: 0176f4245f8aa3b469dbf139bd4f0a65, type: 3}
   cannonFireDelay: 2
-  blastForceUp: 5000
+  blastForceUp: 8000
+  blastRadius: 10
   bulletRendererRPG: {fileID: 1874711959}
   bulletRndObjRPG: {fileID: 1874711957}
 --- !u!114 &6982812147533870051
