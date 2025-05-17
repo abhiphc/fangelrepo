@@ -42,6 +42,11 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] float blastRadius = 5f;
     [SerializeField] LineRenderer bulletRendererRPG;
     [SerializeField] GameObject bulletRndObjRPG;
+
+    [Header("Game Audios")]
+    [SerializeField] AudioSource gunFire;
+    [SerializeField] AudioSource shotgunFire;
+    [SerializeField] AudioSource rpgFire;
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -211,6 +216,11 @@ public class PlayerGameMech : MonoBehaviour
     {
         isShooting = true;
         muzzleFlash.SetActive(true);
+        //Fire sound
+        
+            gunFire.Play();
+        
+
         bulletRenderer.enabled = true;
         bulletRenderer.SetPosition(0, bulletRndObj.transform.position);
         bulletRenderer.SetPosition(1, hit.point);
@@ -222,7 +232,7 @@ public class PlayerGameMech : MonoBehaviour
             hit.rigidbody.AddForce(-hit.normal * bulletForce);
         }
         //****
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.05f);
         muzzleFlash.SetActive(false);
         bulletRenderer.enabled = false;
         yield return new WaitForSeconds(0.01f);
@@ -234,6 +244,11 @@ public class PlayerGameMech : MonoBehaviour
     {
         isShooting = true;
         muzzleFlashSG.SetActive(true);
+        //Fire sound
+
+        shotgunFire.Play();
+        
+
         bulletRendererSG.enabled = true;
         bulletRendererSG.SetPosition(0, bulletRndObjSG.transform.position);
         bulletRendererSG.SetPosition(1, hit.point);
@@ -248,7 +263,7 @@ public class PlayerGameMech : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
         muzzleFlashSG.SetActive(false);
         bulletRendererSG.enabled = false;
-        yield return new WaitForSeconds(0.15f);
+        yield return new WaitForSeconds(0.5f);
         isShooting = false;
 
     }
@@ -272,6 +287,11 @@ public class PlayerGameMech : MonoBehaviour
 
         isShooting = true;
         muzzleFlashRPG.SetActive(true);
+        //blast sound
+        
+            rpgFire.Play();
+        
+
         bulletRendererRPG.enabled = true;
         bulletRendererRPG.SetPosition(0, bulletRndObjRPG.transform.position);
         bulletRendererRPG.SetPosition(1, hit.point);
