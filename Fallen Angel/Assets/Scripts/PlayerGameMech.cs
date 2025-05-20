@@ -25,7 +25,11 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] GameObject bulletRndObj;
     [SerializeField] Rig rig1;
     [SerializeField] float bulletForce = 1000f;
+
+    [Header("Bullet Effects")]
     [SerializeField] GameObject bulletImpact;
+    [SerializeField] GameObject bulletImpactBlood;
+
     RaycastHit hit;
     [SerializeField] List<Transform> weapons = new List<Transform>();
 
@@ -33,6 +37,13 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] GameObject muzzleFlashSG;
     [SerializeField] LineRenderer bulletRendererSG;
     [SerializeField] GameObject bulletRndObjSG;
+
+    [Header("Sniper Properties")]
+    [SerializeField] GameObject sniperScope;
+    [SerializeField] float sniperCameraFOV = 10f;
+    private float normalAimFOV;
+    [SerializeField] bool isScoped = false;
+    [SerializeField] bool isSniperGun = false;
 
     [Header("RPG Properties")]
     [SerializeField] GameObject muzzleFlashRPG;
@@ -47,6 +58,7 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] AudioSource gunFire;
     [SerializeField] AudioSource shotgunFire;
     [SerializeField] AudioSource rpgFire;
+
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -93,10 +105,19 @@ public class PlayerGameMech : MonoBehaviour
             PlayerAimDirection();
             //aiming mode on for Weapons
             animator.SetLayerWeight(3, 1); //Enable aiming layer
-
+           
             WeaponSelect(); // Select weapon through WeaponSelector script
 
+            //Sniper Gun scoped
+            if (isSniperGun && !isScoped)
+            {
+                isScoped = true;
+                sniperScope.SetActive(true);
+                normalAimFOV = VCameras[1].m_Lens.FieldOfView;
+                VCameras[1].m_Lens.FieldOfView = sniperCameraFOV;
+            }
             
+            //firing guns by left clicking mouse
             if (Input.GetMouseButton(0) && !isShooting)
             {
                 if(WeaponSelector.selectedWeaponIndex == 0)
@@ -112,7 +133,7 @@ public class PlayerGameMech : MonoBehaviour
                 if (WeaponSelector.selectedWeaponIndex == 2)
                 {
                     Debug.Log("Sniper is firing");
-                    StartCoroutine(ShootAK(hit)); //for shooting Sniper
+                    StartCoroutine(ShootSniper(hit)); //for shooting Sniper
                 }
                
             }
@@ -141,6 +162,17 @@ public class PlayerGameMech : MonoBehaviour
             this.GetComponent<ThirdPersonController>().sensitivity = normalSensitivity;
             //aiming mode off
             animator.SetLayerWeight(3, 0);
+
+            //Sniper un-scoped
+            if (isSniperGun && isScoped)
+            {
+                isScoped = false;
+                sniperScope.SetActive(false);
+                VCameras[1].m_Lens.FieldOfView = normalAimFOV;
+            }
+            isScoped = false;
+            sniperScope.SetActive(false);
+            VCameras[1].m_Lens.FieldOfView = 18f;
         }
     }
 
@@ -217,16 +249,31 @@ public class PlayerGameMech : MonoBehaviour
         isShooting = true;
         muzzleFlash.SetActive(true);
         //Fire sound
+        gunFire.Play();
         
-            gunFire.Play();
-        
-
         bulletRenderer.enabled = true;
         bulletRenderer.SetPosition(0, bulletRndObj.transform.position);
         bulletRenderer.SetPosition(1, hit.point);
-        //**** bullet effects AK
-        GameObject bulletImpactObj = Instantiate(bulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
-        Destroy(bulletImpactObj, 1.5f);
+
+        //Harm Enemy with AK
+        if (hit.collider.tag == "Enemy")
+        {
+            GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(bulletImpactObjEnemy, 1.5f);
+
+            EnemyHurt enemyHurt = hit.collider.GetComponent<EnemyHurt>();
+            if (enemyHurt != null)
+            {
+                enemyHurt.HarmEnemy(20f);
+            }
+        }
+        else
+        {
+            //**** bullet effects AK for ofstacles;
+            GameObject bulletImpactObj = Instantiate(bulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(bulletImpactObj, 1.5f);
+        }
+        
         if (hit.rigidbody != null && hit.collider.tag != "Player")
         {
             hit.rigidbody.AddForce(-hit.normal * bulletForce);
@@ -252,9 +299,26 @@ public class PlayerGameMech : MonoBehaviour
         bulletRendererSG.enabled = true;
         bulletRendererSG.SetPosition(0, bulletRndObjSG.transform.position);
         bulletRendererSG.SetPosition(1, hit.point);
-        //**** bullet effects Shotgun
-        GameObject bulletImpactObjSG = Instantiate(bulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
-        Destroy(bulletImpactObjSG, 1.5f);
+
+        //Harm Enemy with ShotGun
+        if (hit.collider.tag == "Enemy")
+        {
+            GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(bulletImpactObjEnemy, 1.5f);
+
+            EnemyHurt enemyHurt = hit.collider.GetComponent<EnemyHurt>();
+            if (enemyHurt != null)
+            {
+                enemyHurt.HarmEnemy(30f);
+            }
+        }
+        else
+        {
+            //**** bullet effects ShotGun for ofstacles;
+            GameObject bulletImpactObj = Instantiate(bulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(bulletImpactObj, 1.5f);
+        }
+       
         if (hit.rigidbody != null && hit.collider.tag != "Player")
         {
             hit.rigidbody.AddForce(-hit.normal * bulletForce);
@@ -269,6 +333,39 @@ public class PlayerGameMech : MonoBehaviour
     }
 
     //Shooting Sniper Coroutine
+    IEnumerator ShootSniper(RaycastHit hit)
+    {
+        isShooting = true;
+        //Fire sound
+        gunFire.Play();
+
+        //Harm Enemy with Sniper
+        if (hit.collider.tag == "Enemy")
+        {
+            GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(bulletImpactObjEnemy, 1.5f);
+
+            EnemyHurt enemyHurt = hit.collider.GetComponent<EnemyHurt>();
+            if (enemyHurt != null)
+            {
+                enemyHurt.HarmEnemy(50f);
+            }
+        }
+        else
+        {
+            //**** bullet effects Sniper for obstacles;
+            GameObject bulletImpactObj = Instantiate(bulletImpact, hit.point, Quaternion.LookRotation(hit.normal));
+            Destroy(bulletImpactObj, 1.5f);
+        }
+
+        if (hit.rigidbody != null && hit.collider.tag != "Player")
+        {
+            hit.rigidbody.AddForce(-hit.normal * bulletForce);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+        isShooting = false;
+    }
 
     // Shooting RPG Coroutine
     IEnumerator ShootRPG(RaycastHit hit)
@@ -288,10 +385,8 @@ public class PlayerGameMech : MonoBehaviour
         isShooting = true;
         muzzleFlashRPG.SetActive(true);
         //blast sound
+        rpgFire.Play();
         
-            rpgFire.Play();
-        
-
         bulletRendererRPG.enabled = true;
         bulletRendererRPG.SetPosition(0, bulletRndObjRPG.transform.position);
         bulletRendererRPG.SetPosition(1, hit.point);
@@ -310,52 +405,55 @@ public class PlayerGameMech : MonoBehaviour
                         {
                             rb.AddExplosionForce(blastForceUp, hit.point, blastRadius);
                         }
-            
+                        if(collider.tag == "Enemy")
+                        {
+                            Destroy(collider.gameObject);
+                        }
                 }
-        //****
         yield return new WaitForSeconds(0.25f);
         bulletRendererRPG.enabled = false;
         yield return new WaitForSeconds(0.5f);
         muzzleFlashRPG.SetActive(false);
         yield return new WaitForSeconds(cannonFireDelay);
         isShooting = false;
-
     }
-
-
 
     //Select weapon
     void WeaponSelect()
     {
-        if(WeaponSelector.selectedWeaponIndex == 0)
+        if(WeaponSelector.selectedWeaponIndex == 0) //AK
         {
             weapons[0].gameObject.SetActive(true);
             weapons[1].gameObject.SetActive(false);
             weapons[2].gameObject.SetActive(false);
             weapons[3].gameObject.SetActive(false);
+            isSniperGun = false;
         }
 
-        if (WeaponSelector.selectedWeaponIndex == 1)
+        if (WeaponSelector.selectedWeaponIndex == 1) //Shotgun
         {
             weapons[0].gameObject.SetActive(false);
             weapons[1].gameObject.SetActive(true);
             weapons[2].gameObject.SetActive(false);
             weapons[3].gameObject.SetActive(false);
+            isSniperGun = false;
         }
 
-        if (WeaponSelector.selectedWeaponIndex == 2)
+        if (WeaponSelector.selectedWeaponIndex == 2) //Sniper
         {
             weapons[0].gameObject.SetActive(false);
             weapons[1].gameObject.SetActive(false);
             weapons[2].gameObject.SetActive(true);
             weapons[3].gameObject.SetActive(false);
+            isSniperGun = true;
         }
-        if(WeaponSelector.selectedWeaponIndex == 3)
+        if(WeaponSelector.selectedWeaponIndex == 3) //RPG
         {
             weapons[0].gameObject.SetActive(false);
             weapons[1].gameObject.SetActive(false);
             weapons[2].gameObject.SetActive(false);
             weapons[3].gameObject.SetActive(true);
+            isSniperGun = false;
         }   
     }
     
