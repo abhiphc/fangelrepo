@@ -59,8 +59,6 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] AudioSource shotgunFire;
     [SerializeField] AudioSource rpgFire;
 
-    EnemyHurt enemyHurt;
-
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -262,21 +260,36 @@ public class PlayerGameMech : MonoBehaviour
         {
             GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
             Destroy(bulletImpactObjEnemy, 1.5f);
-            enemyHurt = hit.collider.gameObject.GetComponent<EnemyHurt>();
-            Debug.Log(hit.collider.tag);
-            if (enemyHurt != null)
+
+            if (hit.collider.tag == "Enemy")
             {
-                if (hit.collider.tag == "Enemy")
+
+                EnemyHurt enemyHurt = hit.transform.GetComponent<EnemyHurt>();
+                if (enemyHurt != null)
                 {
                     enemyHurt.HarmEnemy(20f);
+                    Debug.Log(hit.collider.tag + ": Hit...");
                 }
-                else if(hit.collider.tag == "EnemyHead")
+                else
                 {
-                    Debug.Log("Headshot");
-                    //enemyHurt.HarmEnemy(100f);
+                    Debug.Log("EnemyBodyshot: No EnemyHurt script found.");
                 }
-               
+
             }
+            else if (hit.collider.tag == "EnemyHead")
+            {
+                EnemyHurt enemyHurt = hit.transform.GetComponentInParent<EnemyHurt>(); // getting EnemyHurt script from parent object
+                if (enemyHurt != null)
+                {
+                    enemyHurt.HarmEnemy(100f);
+                    Debug.Log(hit.collider.tag + ": Headshot...");
+                }
+                else
+                {
+                    Debug.Log("Headshot: No EnemyHurt script found");
+                }
+            }
+                
         }
         else
         {

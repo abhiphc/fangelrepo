@@ -14,17 +14,13 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] bool canChaseAndAttack;
     GameObject player;
     private int patrolIndex = 0;
-<<<<<<< Updated upstream
+
     Animator animator;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-=======
 
-    void Start()
-    {
->>>>>>> Stashed changes
         player = GameObject.FindGameObjectWithTag("Player");
         agent = GetComponent<NavMeshAgent>();
         isPatrolling = true;
@@ -87,13 +83,13 @@ public class EnemyAI : MonoBehaviour
     void Attacking()
     {
         agent.SetDestination(transform.position); // Stop moving when attacking
-<<<<<<< Updated upstream
+
         transform.LookAt(player.transform);
         animator.SetBool("isAttacking", true);
-=======
+
         //transform.LookAt(playerObj.transform.position); // Rotate to face the player
         Debug.Log("Attacking the player!");
         // Implement attack logic here
->>>>>>> Stashed changes
+
     }
 }
