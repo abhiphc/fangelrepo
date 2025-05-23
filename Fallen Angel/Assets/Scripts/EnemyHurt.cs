@@ -6,11 +6,13 @@ public class EnemyHurt : MonoBehaviour
     [SerializeField] float maxHealth = 100f;
     [SerializeField] bool isEnemyDead;
     [SerializeField] float currentHealth;
-    
+    Animator animator;
+
     private void Start()
     {
         currentHealth = maxHealth;
         isEnemyDead = false;
+        animator = GetComponent<Animator>();
     }
 
     public void HarmEnemy(float harmValue)
@@ -26,7 +28,17 @@ public class EnemyHurt : MonoBehaviour
     {
         Debug.Log("Enemy Dead");
         isEnemyDead = true;
-        Destroy(gameObject);
+        if(animator!=null)
+        {
+            animator.SetTrigger("EnemyDies");
+            GetComponent<EnemyAI>().enabled = false;
+            Destroy(gameObject, 5f);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        
     }
 
 }

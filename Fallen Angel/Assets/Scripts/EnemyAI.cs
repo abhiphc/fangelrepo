@@ -14,9 +14,11 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] bool isPatrolling;
     [SerializeField] bool canChaseAndAttack;
     private int patrolIndex = 0;
+    Animator animator;
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
         player = GameObject.FindGameObjectWithTag("Player");
         isPatrolling = true;
         canChaseAndAttack = false;
@@ -34,6 +36,7 @@ public class EnemyAI : MonoBehaviour
         if (isPatrolling)
         {
             canChaseAndAttack = false; // Stop chasing when patrolling
+            animator.SetBool("isAttacking", false);
             agent.SetDestination(patrolPoints[patrolIndex].position);
             if(Vector3.Distance(transform.position, patrolPoints[patrolIndex].position) < 1f)
             {
@@ -69,6 +72,7 @@ public class EnemyAI : MonoBehaviour
     {
         isPatrolling = false; // Stop patrolling when chasing
         canChaseAndAttack = true; // Enable chasing and attacking
+        animator.SetBool("isAttacking", false);
         agent.SetDestination(player.transform.position); // Set the destination to the player's position
         transform.LookAt(player.transform.position); // Rotate to face the player
        
@@ -78,5 +82,7 @@ public class EnemyAI : MonoBehaviour
         // Implement attack logic here
         Debug.Log("Attacking the player!");
         agent.SetDestination(transform.position); // Stop moving when attacking
+        transform.LookAt(player.transform);
+        animator.SetBool("isAttacking", true);
     }
 }
