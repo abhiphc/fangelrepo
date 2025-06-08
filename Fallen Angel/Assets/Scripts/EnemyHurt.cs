@@ -1,5 +1,5 @@
 using UnityEngine;
-
+using UnityEngine.AI;
 public class EnemyHurt : MonoBehaviour
 {
     [Header("Enemy Health Properties")]
@@ -31,7 +31,18 @@ public class EnemyHurt : MonoBehaviour
         if(animator!=null)
         {
             animator.SetTrigger("EnemyDies");
-            GetComponent<EnemyAI>().enabled = false;
+            if(GetComponent<EnemyAI>() != null)
+            {
+                GetComponent<EnemyAI>().enabled = false;
+            }
+
+            GetComponent<NavMeshAgent>().SetDestination(transform.position);
+
+            if(GetComponent<BoxCollider>() != null)
+            {
+                GetComponent<BoxCollider>().enabled = false;
+            }
+            
             Destroy(gameObject, 5f);
         }
         else

@@ -59,8 +59,6 @@ public class PlayerGameMech : MonoBehaviour
     [SerializeField] AudioSource shotgunFire;
     [SerializeField] AudioSource rpgFire;
 
-    EnemyHurt enemyHurt;
-
     private void Awake()
     {
         animator = this.GetComponent<Animator>();
@@ -262,21 +260,26 @@ public class PlayerGameMech : MonoBehaviour
         {
             GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
             Destroy(bulletImpactObjEnemy, 1.5f);
-            enemyHurt = hit.collider.gameObject.GetComponent<EnemyHurt>();
-            Debug.Log(hit.collider.tag);
-            if (enemyHurt != null)
-            {
+            
                 if (hit.collider.tag == "Enemy")
                 {
-                    enemyHurt.HarmEnemy(20f);
+                    EnemyHurt enemyHurt = hit.transform.GetComponent<EnemyHurt>();
+                    if (enemyHurt != null)
+                    {
+                        enemyHurt.HarmEnemy(20f);
+                    }
+                
                 }
                 else if(hit.collider.tag == "EnemyHead")
                 {
-                    Debug.Log("Headshot");
-                    //enemyHurt.HarmEnemy(100f);
+                    EnemyHurt enemyHurt = hit.transform.GetComponentInParent<EnemyHurt>();
+                    if (enemyHurt != null)
+                    {
+                        enemyHurt.HarmEnemy(100f);
+                    }
                 }
                
-            }
+            
         }
         else
         {
@@ -312,15 +315,27 @@ public class PlayerGameMech : MonoBehaviour
         bulletRendererSG.SetPosition(1, hit.point);
 
         //Harm Enemy with ShotGun
-        if (hit.collider.tag == "Enemy")
+        if (hit.collider.tag == "Enemy" || hit.collider.tag == "EnemyHead")
         {
             GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
             Destroy(bulletImpactObjEnemy, 1.5f);
 
-            EnemyHurt enemyHurt = hit.collider.GetComponent<EnemyHurt>();
-            if (enemyHurt != null)
+            if (hit.collider.tag == "Enemy")
             {
-                enemyHurt.HarmEnemy(30f);
+                EnemyHurt enemyHurt = hit.transform.GetComponent<EnemyHurt>();
+                if (enemyHurt != null)
+                {
+                    enemyHurt.HarmEnemy(30f);
+                }
+
+            }
+            else if (hit.collider.tag == "EnemyHead")
+            {
+                EnemyHurt enemyHurt = hit.transform.GetComponentInParent<EnemyHurt>();
+                if (enemyHurt != null)
+                {
+                    enemyHurt.HarmEnemy(100f);
+                }
             }
         }
         else
@@ -351,15 +366,27 @@ public class PlayerGameMech : MonoBehaviour
         gunFire.Play();
 
         //Harm Enemy with Sniper
-        if (hit.collider.tag == "Enemy")
+        if (hit.collider.tag == "Enemy" || hit.collider.tag == "EnemyHead")
         {
             GameObject bulletImpactObjEnemy = Instantiate(bulletImpactBlood, hit.point, Quaternion.LookRotation(hit.normal));
             Destroy(bulletImpactObjEnemy, 1.5f);
 
-            EnemyHurt enemyHurt = hit.collider.GetComponent<EnemyHurt>();
-            if (enemyHurt != null)
+            if (hit.collider.tag == "Enemy")
             {
-                enemyHurt.HarmEnemy(50f);
+                EnemyHurt enemyHurt = hit.transform.GetComponent<EnemyHurt>();
+                if (enemyHurt != null)
+                {
+                    enemyHurt.HarmEnemy(50f);
+                }
+
+            }
+            else if (hit.collider.tag == "EnemyHead")
+            {
+                EnemyHurt enemyHurt = hit.transform.GetComponentInParent<EnemyHurt>();
+                if (enemyHurt != null)
+                {
+                    enemyHurt.HarmEnemy(100f);
+                }
             }
         }
         else

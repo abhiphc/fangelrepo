@@ -8,10 +8,11 @@ public class PlayerHealthController : MonoBehaviour
 {
     [SerializeField] float maxHealth = 100f;
     [SerializeField] Slider healthbar;
-    [SerializeField] float damageAmount;
     private float health;
     public static bool isDead;
     [SerializeField] Animator playerAnimator;
+    [SerializeField] float healthRegainRate = 1f;
+
     private void Start()
     {
         health = maxHealth;
@@ -22,21 +23,11 @@ public class PlayerHealthController : MonoBehaviour
 
     void Update()
     {
-        TakeDamage(damageAmount);
+        //TakeDamage(damageAmount);
         HealthRegain();
     }
     public void TakeDamage(float damage)
     {
-        //health -= damage;
-        //healthbar.value -= damage;
-        //if (health <= 0f)
-        //{
-        //    Die();
-        //}
-        //HealthRegain();
-
-        if (Input.GetKeyDown(KeyCode.T))
-        {
             health -= damage;
             healthbar.value -= damage;
             if (health <= 0f)
@@ -44,7 +35,6 @@ public class PlayerHealthController : MonoBehaviour
                 Die();
             }
            
-        }
         HealthRegain();
     }
     void Die()
@@ -61,7 +51,7 @@ public class PlayerHealthController : MonoBehaviour
     {
         if((health < maxHealth) && !isDead)
         {
-            health += Time.deltaTime * 4f;
+            health += Time.deltaTime * healthRegainRate;
             if(health >= maxHealth)
             {
                 health = maxHealth;

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class EnemyAI : MonoBehaviour
 {
     NavMeshAgent agent;
+    
     [SerializeField] float distanceToPlayer;
     [SerializeField] float chaseDistance = 20f; // Distance to start chasing the player
     [SerializeField] float attackDistance = 2f; // Distance to attack the player
@@ -15,6 +16,17 @@ public class EnemyAI : MonoBehaviour
     [SerializeField] bool canChaseAndAttack;
     private int patrolIndex = 0;
     Animator animator;
+    [Header("Enemy Gun Properties")]
+    [SerializeField] bool isEnemyFiring =false;
+    [SerializeField] AudioSource gunFireSound;
+    [SerializeField] GameObject bulletPointObj;
+    [SerializeField] GameObject bullet;
+    [SerializeField] float bulletSpeed = 100f;
+    [SerializeField] GameObject muzzleFlash;
+
+    [Header("Enemy Type")]
+    [SerializeField] bool isNonPetrolEnemy = false;
+
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -33,7 +45,7 @@ public class EnemyAI : MonoBehaviour
     }
     void StartPatrol()
     {
-        if (isPatrolling)
+        if (isPatrolling && !isNonPetrolEnemy)
         {
             canChaseAndAttack = false; // Stop chasing when patrolling
             animator.SetBool("isAttacking", false);
@@ -48,10 +60,18 @@ public class EnemyAI : MonoBehaviour
             }
            
         }
+
+        if (isPatrolling && isNonPetrolEnemy)
+        {
+            agent.SetDestination(transform.position);
+        }
+        
     }
     void ChasingAndAttacking()
     {
-            if(distanceToPlayer <= chaseDistance && distanceToPlayer > attackDistance)
+        if(!isNonPetrolEnemy)
+        {
+            if (distanceToPlayer <= chaseDistance && distanceToPlayer > attackDistance)
             {
                 Chasing();
             }
@@ -64,6 +84,20 @@ public class EnemyAI : MonoBehaviour
                 isPatrolling = true; // Resume patrolling when out of range
                 canChaseAndAttack = false; // Stop chasing when not in range
                 StartPatrol();
+            }
+        }
+        if(isNonPetrolEnemy)
+        {
+            if(distanceToPlayer <= attackDistance)
+            {
+                Attacking();
+            }
+            else
+            {
+                isPatrolling = true; 
+                canChaseAndAttack = false;
+                StartPatrol();
+            }
         }
         
     }
@@ -83,6 +117,34 @@ public class EnemyAI : MonoBehaviour
         Debug.Log("Attacking the player!");
         agent.SetDestination(transform.position); // Stop moving when attacking
         transform.LookAt(player.transform);
-        animator.SetBool("isAttacking", true);
+
+        if(!isNonPetrolEnemy)
+        {
+            animator.SetBool("isAttacking", true);
+        }
+        
+        if(!isEnemyFiring)
+        {
+            StartCoroutine(EnemyGunFiring());
+        }
+        
+    }
+
+    IEnumerator EnemyGunFiring()
+    {
+        isEnemyFiring = true;
+        muzzleFlash.SetActive(true);
+        gunFireSound.Play();
+        GameObject go = Instantiate(bullet, bulletPointObj.transform.position, Quaternion.identity);
+        Rigidbody rb = go.GetComponent<Rigidbody>();
+        if(rb !=null)
+        {
+            rb.linearVelocity = bulletPointObj.transform.forward * bulletSpeed * Time.deltaTime;
+        }
+        Destroy(go, 5f);
+        yield return new WaitForSeconds(0.25f);
+        muzzleFlash.SetActive(false);
+        yield return new WaitForSeconds(1f);
+        isEnemyFiring = false;
     }
 }

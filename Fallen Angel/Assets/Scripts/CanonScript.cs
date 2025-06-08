@@ -2,31 +2,23 @@ using UnityEngine;
 
 public class CanonScript : MonoBehaviour
 {
-    [SerializeField] GameObject blastEffect;
-    [SerializeField] float blastDuration = 1.5f;
+    GameObject pl;
+    [SerializeField] float damageAmount = 20f;
+
+    private void Start()
+    {
+        pl = GameObject.FindGameObjectWithTag("Player");
+    }
     void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.gameObject.tag + " Hits");
-        if (collision.gameObject.tag == "Obstacle")
+       
+        if (collision.gameObject.tag == "Player")
         {
-            GameObject blast = Instantiate(blastEffect, transform.position, Quaternion.identity);
-            Destroy(blast, blastDuration);
-            Destroy(collision.gameObject);
-            Destroy(gameObject,1f);
+            Debug.Log("Player Hits");
+            pl.GetComponent<PlayerHealthController>().TakeDamage(damageAmount);
+            Destroy(gameObject);
         }
-        else if (collision.gameObject.tag == "Player")
-        {
-            Debug.Log("Player Hit");
-            //collision.gameObject.GetComponent<PlayerController>().Die();
-
-        }
-        else
-        {
-            GameObject blast = Instantiate(blastEffect, transform.position, Quaternion.identity);
-            Destroy(blast, blastDuration);
-            Destroy(gameObject,1f);
-
-        }
+        
     }
     
 }
